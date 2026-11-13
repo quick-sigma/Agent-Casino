@@ -35,7 +35,7 @@ plantilla_turno = "Turno {turno}. Saldo: {saldo}."
 
 [guardas]
 max_llamadas_api = 300
-max_segundos = 1800
+max_segundos = 3600
 max_reintentos_malformed = 2
 max_rpm = 12
 cooldown_429_s = 60

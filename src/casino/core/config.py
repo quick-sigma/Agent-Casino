@@ -100,6 +100,27 @@ class Settings(BaseModel):
             )
         return self
 
+    @model_validator(mode="after")
+    def _tiempo_alcanza(self) -> "Settings":
+        # La guarda mide reloj de pared, así que incluye los sleeps del limitador
+        # y los cooldowns 429. Sin holgura aborta un run perfectamente sano.
+        necesarias = self.experimento.generaciones * (
+            2 * self.experimento.turnos_por_generacion + 1
+        )
+        piso = necesarias * 60.0 / self.guardas.max_rpm
+        peor_cooldown = self.guardas.cooldown_429_s * (
+            2**self.guardas.max_reintentos_429 - 1
+        )
+        minimo = piso + peor_cooldown + 180.0  # +3 min de holgura de latencia
+        if self.guardas.max_segundos < minimo:
+            raise ValueError(
+                f"max_segundos={self.guardas.max_segundos:g}s es menor que el "
+                f"mínimo {minimo:.0f}s (piso {piso:.0f}s = {necesarias} llamadas "
+                f"a {self.guardas.max_rpm} rpm + {peor_cooldown:.0f}s de cooldowns "
+                "+ 180s de holgura). Sube max_segundos o sube max_rpm."
+            )
+        return self
+
     def config_hash(self) -> str:
         canonico = json.dumps(
             self.model_dump(mode="json"), sort_keys=True, separators=(",", ":")

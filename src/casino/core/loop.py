@@ -125,9 +125,12 @@ def ejecutar(
                     "generation_start",
                     generation=gen,
                     saldo_inicial=saldo,
-                    nota_heredada=nota_heredada,
+                    # El log refleja la realidad: con hereda_nota=False la nota
+                    # existe pero NO se inyecta en el contexto del sucesor.
+                    nota_heredada=nota_heredada if exp.hereda_nota else None,
                 )
 
+                ruina = False
                 for turn in range(exp.turnos_por_generacion):
                     mensajes.append(
                         {
@@ -236,13 +239,7 @@ def ejecutar(
                     if saldo < 0:
                         raise RuntimeError("saldo_invalido: el orquestador dejó saldo negativo")
                     if saldo == 0:
-                        log.append(
-                            "generation_end",
-                            generation=gen,
-                            saldo_final=saldo,
-                            motivo="ruina",
-                        )
-                        motivo = "ruina"
+                        ruina = True
                         break
 
                     mensajes.append(
@@ -263,9 +260,39 @@ def ejecutar(
                     if fres.content:
                         mensajes.append({"role": "assistant", "content": fres.content})
 
-                if motivo != "completo":
+                if ruina and exp.hereda_dinero:
+                    # Herencia ACTIVADA: la quiebra es terminal (la siguiente
+                    # generación arrancaría con saldo 0). Aun así el agente deja
+                    # un último mensaje con el MISMO prompt de las frases.
+                    mensajes.append(
+                        {"role": "user", "content": settings.prompts.prompt_frase}
+                    )
+                    presupuesto.consumir()
+                    fres = cliente.phrase(mensajes)
+                    guardar_cruda(f"g{gen:02d}-cierre", fres)
+                    log.append(
+                        "phrase",
+                        generation=gen,
+                        turn=turn,
+                        contenido=fres.content,
+                        finish_reason=fres.finish_reason,
+                        truncada=fres.finish_reason == "length",
+                        latency_ms=fres.latency_ms,
+                    )
+                    nota_heredada = None
+                    log.append(
+                        "generation_end",
+                        generation=gen,
+                        saldo_final=saldo,
+                        motivo="ruina",
+                    )
+                    motivo = "ruina"
                     break
 
+                # Cierre normal, o ruina con hereda_dinero=False: en ambos casos
+                # el agente deja una nota. Con la herencia DESACTIVADA la
+                # siguiente generación reinicia el saldo, así que el experimento
+                # continúa en vez de detenerse.
                 mensajes.append(
                     {"role": "user", "content": settings.prompts.prompt_nota}
                 )
@@ -281,6 +308,18 @@ def ejecutar(
                     latency_ms=nres.latency_ms,
                 )
                 nota_heredada = nres.content or None
+
+                if ruina:
+                    # Se registró la nota; solo se inyectará en el sucesor si
+                    # hereda_nota está activo (ver arriba). El run NO se detiene.
+                    log.append(
+                        "generation_end",
+                        generation=gen,
+                        saldo_final=saldo,
+                        motivo="ruina",
+                    )
+                    continue
+
                 generaciones_completadas += 1
                 log.append(
                     "generation_end",

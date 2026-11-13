@@ -27,6 +27,7 @@ Sin la UI, un run directo: `uv run python -m casino --config configs/smoke-001.t
 - **Sesgo del casi-acierto.** El motor define `NEAR_MISS` cuando salen `SEVEN, SEVEN, <no SEVEN>` y paga cero. El agente **no recibe** esa etiqueta: su observación contiene solo hechos (`rodillos`, `apuesta`, `pago`, `saldo`). Si reacciona al near-miss, lo infiere él.
 - **Gestión de bankroll bajo RTP conocido.** La máquina devuelve 0.919 por unidad apostada a largo plazo; el agente parte de 2000 y decide cuánto apostar en cada turno.
 - **Herencia cultural.** Al cerrar una generación el agente escribe una nota; la generación siguiente puede leerla (`hereda_nota`) y, opcionalmente, heredar el saldo (`hereda_dinero`).
+- **La quiebra como evento informativo.** Un agente en bancarrota siempre deja un último mensaje, y según `hereda_dinero` la ruina es terminal o el experimento continúa con una nota legada (ver §2).
 
 La hipótesis operativa es que el diseño permite separar lo que viene del **modelo** de lo que viene del **azar**, porque los rodillos son idénticos para un mismo `(run_seed, generación, turno)` sin importar cuánto apueste el agente.
 
@@ -70,7 +71,20 @@ Por cada turno se hacen **dos** llamadas al LLM y **una** más por generación:
 
 ### Generaciones
 
-`generaciones` agentes se sientan en orden. Si `hereda_dinero=false`, cada uno reinicia con `dinero_inicial`; si `hereda_nota=true`, arranca leyendo la nota del anterior. Saldo en cero ⇒ `ruina` y se detiene esa generación.
+`generaciones` agentes se sientan en orden. Si `hereda_dinero=false`, cada uno reinicia con `dinero_inicial`; si `hereda_nota=true`, arranca leyendo la nota del anterior.
+
+### Bancarrota (condición)
+
+Al llegar a `saldo == 0` el agente **siempre deja un último mensaje**; lo que ocurra después depende de `hereda_dinero`:
+
+| `hereda_dinero` | Mensaje final | ¿Sigue el experimento? | Nota al sucesor |
+|---|---|---|---|
+| `false` (desactivada) | `note` con `prompt_nota` | **Sí** — la generación siguiente reinicia el saldo | Se genera y registra; se inyecta solo si `hereda_nota=true` |
+| `true` (activada) | `phrase` con `prompt_frase` («explicar en una frase») | **No** — `motivo="ruina"`, el run termina ahí | No se genera |
+
+La rama desactivada reutiliza el camino normal de la nota, así que el evento `note` aparece igual que en un cierre sin quiebra. La rama activada registra la frase de cierre **antes** de `generation_end` y `run_end`, para que la GUI la muestre en el globo de diálogo. En ambos casos `generation_end` queda con `motivo="ruina"`; una generación quebrada no incrementa `generaciones_completadas`.
+
+> Con `hereda_nota=false` la nota de un agente quebrado se genera y se registra, pero **no** se inyecta en el contexto del sucesor (se respeta el flag). El evento `generation_start.nota_heredada` se escribe como `null` en ese caso.
 
 Presupuesto de llamadas validado al cargar la config:
 
@@ -215,7 +229,7 @@ Si `enable_thinking=false` y el modelo devuelve `reasoning_content`/`reasoning`,
 | Campo | Significado |
 |---|---|
 | `max_llamadas_api` | Tope de llamadas; aborta con `GuardiaExcedida` |
-| `max_segundos` | Tope de tiempo; aborta con `GuardiaExcedida` |
+| `max_segundos` | Tope de **reloj de pared** (incluye esperas del limitador y cooldowns); aborta con `GuardiaExcedida`. `Settings` exige un mínimo calculado, ver §7 |
 | `max_reintentos_malformed` | Reintentos por tool call inválido |
 | `max_rpm` | Techo de llamadas por minuto (default en código: 40, solo para TOMLs viejos) |
 | `cooldown_429_s` | Espera base tras un 429; se duplica en cada reintento |
@@ -223,7 +237,7 @@ Si `enable_thinking=false` y el modelo devuelve `reasoning_content`/`reasoning`,
 
 ### Defaults de la GUI
 
-`gui/server.py` centraliza los valores que se precargan en el formulario (`GUI_DEFAULTS`): `run_seed="0"`, `temperature=0.0`, `max_retries=0`, los prompts de producción, `max_rpm=12`, `max_segundos=1800`, `cooldown_429_s=60`, `max_reintentos_429=2`, y `run_id` sugerido `prod-temp0-casino-001`. Todos son **editables**. El `run_id` se incrementa automáticamente si ya existe un TOML o un directorio con ese nombre, para no sobreescribir corridas anteriores.
+`gui/server.py` centraliza los valores que se precargan en el formulario (`GUI_DEFAULTS`): `run_seed="0"`, `temperature=0.0`, `max_retries=0`, los prompts de producción, `max_rpm=12`, `max_segundos=3600`, `cooldown_429_s=60`, `max_reintentos_429=2`, y `run_id` sugerido `prod-temp0-casino-001`. Todos son **editables**. El `run_id` se incrementa automáticamente si ya existe un TOML o un directorio con ese nombre, para no sobreescribir corridas anteriores.
 
 ---
 
@@ -243,13 +257,23 @@ Por eso el cliente toma el control completo:
 piso_segundos = llamadas × 60 / max_rpm
 ```
 
-| Config | `max_rpm` | Piso (205 llamadas) | `max_segundos` | Margen |
-|---|---|---|---|---|
-| `configs/smoke-001.toml` | 12 | 1025 s | 1800 s | ✅ holgado |
-| Defaults de la GUI | 12 | 1025 s | 1800 s | ✅ holgado |
-| `configs/gui/prod-temp0-casino-001.toml` | **7** | **≈1757 s** | **1800 s** | ⚠️ **~43 s** |
+Pero `max_segundos` mide **reloj de pared**, así que también cuenta los sleeps del limitador y los cooldowns por 429. Un config con el techo justo aborta un run sano a mitad de camino (`max_segundos excedido`, sin que haya ningún error real). Por eso `Settings._tiempo_alcanza` **rechaza el config al cargarlo** si no cumple:
 
-> Con 7 rpm el margen es tan corto que **un solo cooldown de 60 s haría que la guarda de tiempo aborte el run** cerca del final. Si vas a seguir con 7 rpm, sube `max_segundos` a 2400 o más. La GUI muestra este cálculo en vivo bajo `max_segundos` y avisa cuando la guarda queda por debajo del piso.
+```
+minimo = piso + cooldown_429_s × (2^max_reintentos_429 − 1) + 180 s
+```
+
+(el peor cooldown de un 429 más 3 min de holgura para latencia). El mensaje de error dice el número exacto a poner. La GUI muestra el mismo cálculo en vivo bajo `max_segundos` y lo corrige automáticamente al cambiar `max_rpm`.
+
+| Config | `max_rpm` | Piso (205 llamadas) | Mínimo exigido | `max_segundos` | Margen |
+|---|---|---|---|---|---|
+| `configs/smoke-001.toml` | 12 | 1025 s | 1385 s | 3600 s | ✅ |
+| Defaults de la GUI | 12 | 1025 s | 1385 s | 3600 s | ✅ |
+| `configs/gui/prod-temp0-casino-001.toml` | 7 | ≈1757 s | ≈2117 s | 3600 s | ✅ |
+
+> Historia real: con 7 rpm y `max_segundos=1800` el run abortó tras **82 de 205 llamadas** (1 generación completada). El piso ya era 1757 s; un par de cooldowns de 60/120 s y la latencia se comieron los 43 s de margen. Con 3600 no se repite, y si vuelves a bajar `max_rpm` el validador te lo impide **antes** de perder media hora.
+
+Si necesitas que el run termine antes, la otra palanca es **subir `max_rpm`** (a 12 el piso baja a 1025 s), a costa de más riesgo de 429. No hay forma de acelerar el espaciado sin pagar ese peaje.
 
 **Si una sola petición ya devuelve 429**, la key está en penalty box y ningún ajuste de cliente sirve: deja de llamar 30–60 min y comprueba con `uv run python scripts/sonda_429.py` (una sola petición, `max_retries=0`). Recuerda que esa sonda también reinicia el timer: córrela solo cuando estés listo para empezar a contar la espera.
 

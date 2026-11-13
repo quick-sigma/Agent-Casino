@@ -320,35 +320,102 @@ def test_hereda_dinero_true_arrastra_saldo(fabrica):
 # --- ruina y guardas -----------------------------------------------------
 
 
-def test_ruina_corta_sin_frase_ni_nota(fabrica, monkeypatch):
-    settings, cfg = fabrica(
+def _spin_seco(request):
+    """Tirada que siempre pierde: con una apuesta igual al saldo, quiebra."""
+    return SpinResult(
+        **request.model_dump(),
+        reels=(Symbol.LEMON, Symbol.BELL, Symbol.GRAPE),
+        kind=OutcomeKind.LOSS,
+        multiplier=0,
+        payout=0,
+    )
+
+
+def _config_ruina(fabrica, **experimento):
+    return fabrica(
         experimento={
             "dinero_inicial": 10,
             "turnos_por_generacion": 5,
             "generaciones": 2,
+            **experimento,
         }
     )
 
-    def spin_seco(request):
-        return SpinResult(
-            **request.model_dump(),
-            reels=(Symbol.LEMON, Symbol.BELL, Symbol.GRAPE),
-            kind=OutcomeKind.LOSS,
-            multiplier=0,
-            payout=0,
-        )
 
-    monkeypatch.setattr(loop, "spin", spin_seco)
-    fake = FakeLLM(decisiones=[decision(10)], frases=[], notas=[])
+def test_ruina_sin_hereda_dinero_deja_nota_y_continua(fabrica, monkeypatch):
+    monkeypatch.setattr(loop, "spin", _spin_seco)
+    settings, cfg = _config_ruina(fabrica)  # hereda_dinero=False, hereda_nota=True
+    fake = FakeLLM(
+        decisiones=[decision(10), decision(10)],
+        frases=[],
+        notas=[texto("note", "NOTA-G0"), texto("note", "NOTA-G1")],
+    )
+
+    resumen = loop.ejecutar(settings, cfg, cliente=fake)
+
+    # El experimento NO se detiene: corren las dos generaciones.
+    assert resumen["motivo"] == "completo"
+    assert resumen["saldo_final"] == 0
+    assert len(fake.de("decision")) == 2
+    assert not fake.de("phrase")
+    assert len(fake.de("note")) == 2
+
+    eventos = leer_eventos(settings)
+    assert [e["motivo"] for e in por_tipo(eventos, "generation_end")] == ["ruina", "ruina"]
+    assert [e["contenido"] for e in por_tipo(eventos, "note")] == ["NOTA-G0", "NOTA-G1"]
+
+    inicios = por_tipo(eventos, "generation_start")
+    assert inicios[1]["nota_heredada"] == "NOTA-G0"
+    # Y la nota realmente se inyecta en el contexto del sucesor.
+    assert fake.de("decision")[1]["messages"][1] == {
+        "role": "user",
+        "content": "NOTA-G0",
+    }
+
+
+def test_ruina_con_hereda_dinero_cierra_con_frase_y_detiene(fabrica, monkeypatch):
+    monkeypatch.setattr(loop, "spin", _spin_seco)
+    settings, cfg = _config_ruina(fabrica, hereda_dinero=True)
+    fake = FakeLLM(
+        decisiones=[decision(10)],
+        frases=[texto("phrase", "ME ARRUINE")],
+        notas=[],
+    )
+
     resumen = loop.ejecutar(settings, cfg, cliente=fake)
 
     assert resumen["motivo"] == "ruina"
     assert resumen["saldo_final"] == 0
-    assert resumen["generaciones_completadas"] == 0
     assert len(fake.de("decision")) == 1
-    assert not fake.de("phrase")
+    assert len(fake.de("phrase")) == 1
     assert not fake.de("note")
-    assert por_tipo(leer_eventos(settings), "generation_end")[0]["motivo"] == "ruina"
+
+    eventos = leer_eventos(settings)
+    frase = por_tipo(eventos, "phrase")[0]
+    assert frase["contenido"] == "ME ARRUINE"
+    assert por_tipo(eventos, "generation_end")[0]["motivo"] == "ruina"
+    # El mensaje final va ANTES de cerrar la generación y el run.
+    assert frase["seq"] < por_tipo(eventos, "generation_end")[0]["seq"]
+    assert frase["seq"] < por_tipo(eventos, "run_end")[0]["seq"]
+    assert por_tipo(eventos, "run_end")[0]["motivo"] == "ruina"
+
+
+def test_ruina_sin_hereda_nota_no_inyecta_nota(fabrica, monkeypatch):
+    monkeypatch.setattr(loop, "spin", _spin_seco)
+    settings, cfg = _config_ruina(fabrica, hereda_nota=False)
+    fake = FakeLLM(
+        decisiones=[decision(10), decision(10)],
+        frases=[],
+        notas=[texto("note", "NOTA-G0"), texto("note", "NOTA-G1")],
+    )
+
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    # La nota se genera y se registra, pero NO cruza al sucesor.
+    assert len(fake.de("note")) == 2
+    eventos = leer_eventos(settings)
+    assert por_tipo(eventos, "generation_start")[1]["nota_heredada"] is None
+    assert "NOTA-G0" not in json.dumps(fake.de("decision")[1]["messages"])
 
 
 def test_guarda_llamadas_aborta(fabrica):
