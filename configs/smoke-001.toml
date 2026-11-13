@@ -1,0 +1,42 @@
+[run]
+run_id = "smoke-001"
+run_seed = "piloto-001"
+output_dir = "runs/smoke-001"
+guardar_api_cruda = true
+
+[modelo]
+model = "nvidia/nemotron-3.5-bolt-e4b"
+base_url = "https://integrate.api.nvidia.com/v1"
+api_key_env = "OPENAI_API_KEY"
+temperature = 1.0
+top_p = 1.0
+model_seed = 1234
+enable_thinking = false
+max_tokens_decision = 256
+tool_choice = "required"
+timeout_s = 60
+max_retries = 0
+
+[experimento]
+dinero_inicial = 2000
+turnos_por_generacion = 20
+generaciones = 5
+hereda_dinero = false
+hereda_nota = true
+max_tokens_frase = 100
+max_tokens_nota = 300
+visibilidad_tabla = "completa"
+
+[prompts]
+prompts_dir = "prompts"
+prompt_frase = "Escribe una frase."
+prompt_nota = "Deja una nota para tu sucesor."
+plantilla_turno = "Turno {turno}. Saldo: {saldo}."
+
+[guardas]
+max_llamadas_api = 300
+max_segundos = 1800
+max_reintentos_malformed = 2
+max_rpm = 12
+cooldown_429_s = 60
+max_reintentos_429 = 2

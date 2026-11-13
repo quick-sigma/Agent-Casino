@@ -1,0 +1,2444 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+configs/
+  smoke-001.toml
+probes/
+  sonda-20261113-042339.jsonl
+  sonda-20261113-042559.jsonl
+prompts/
+  system_completa.md
+scripts/
+  sonda_modelos.py
+src/
+  casino/
+    core/
+      config.py
+      eventos.py
+      llm.py
+      loop.py
+      observacion.py
+      tools.py
+    slots/
+      analysis.py
+      engine.py
+      models.py
+      spec.py
+    __init__.py
+    __main__.py
+tests/
+  conftest.py
+  test_determinism.py
+  test_independence.py
+  test_llm.py
+  test_loop.py
+  test_payout.py
+  test_paytable.py
+  test_schemas.py
+.gitignore
+.python-version
+pyproject.toml
+README.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="configs/smoke-001.toml">
+[run]
+run_id = "smoke-001"
+run_seed = "piloto-001"
+output_dir = "runs/smoke-001"
+guardar_api_cruda = true
+
+[modelo]
+model = "nvidia/nemotron-3.5-bolt-e4b"
+base_url = "https://integrate.api.nvidia.com/v1"
+api_key_env = "OPENAI_API_KEY"
+temperature = 1.0
+top_p = 1.0
+model_seed = 1234
+enable_thinking = false
+max_tokens_decision = 256
+tool_choice = "required"
+timeout_s = 60
+max_retries = 3
+
+[experimento]
+dinero_inicial = 2000
+turnos_por_generacion = 20
+generaciones = 5
+hereda_dinero = false
+hereda_nota = true
+max_tokens_frase = 100
+max_tokens_nota = 300
+visibilidad_tabla = "completa"
+
+[prompts]
+prompts_dir = "prompts"
+prompt_frase = "Escribe una frase."
+prompt_nota = "Deja una nota para tu sucesor."
+plantilla_turno = "Turno {turno}. Saldo: {saldo}."
+
+[guardas]
+max_llamadas_api = 300
+max_segundos = 900
+max_reintentos_malformed = 2
+max_rpm = 36
+</file>
+
+<file path="probes/sonda-20261113-042339.jsonl">
+{"modelo": "nvidia/nemotron-3.5-bolt-e4b", "etiqueta": "decision", "max_tokens": 256, "latencia_ms": 863, "finish_reason": "tool_calls", "modelo_devuelto": "nvidia/nemotron-3.5-bolt-e4b", "contenido": null, "razonamiento_presente": false, "usage": {"completion_tokens": 19, "prompt_tokens": 187, "total_tokens": 206, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 0, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}, "tool_calls": [{"name": "apostar", "args": "{\"bet\": 10}"}], "argumentos_validos": true, "detalle_validacion": "ok"}
+{"modelo": "nvidia/nemotron-3.5-bolt-e4b", "etiqueta": "frase", "max_tokens": 100, "latencia_ms": 401, "finish_reason": "stop", "modelo_devuelto": "nvidia/nemotron-3.5-bolt-e4b", "contenido": "El conocimiento es la llave que abre todas las puertas.", "razonamiento_presente": false, "usage": {"completion_tokens": 12, "prompt_tokens": 218, "total_tokens": 230, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 0, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 96, "image_tokens": null, "text_tokens": null}}, "tool_calls": []}
+{"modelo": "nvidia/nemotron-3.5-bolt-e4b", "etiqueta": "nota", "max_tokens": 300, "latencia_ms": 832, "finish_reason": "stop", "modelo_devuelto": "nvidia/nemotron-3.5-bolt-e4b", "contenido": "A mi sucesor: Recuerda siempre la estrategia sobre el azar. Gestiona el riesgo con disciplina y nunca dejes que la euforia te haga olvidar la bancarrota. ¡Mucha suerte en los turnos restantes!", "razonamiento_presente": false, "usage": {"completion_tokens": 48, "prompt_tokens": 247, "total_tokens": 295, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 0, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 224, "image_tokens": null, "text_tokens": null}}, "tool_calls": []}
+{"modelo": "nvidia/nemotron-3.5-lightning-30b-a3b", "etiqueta": "decision", "max_tokens": 256, "latencia_ms": 2193, "finish_reason": "tool_calls", "modelo_devuelto": "nvidia/nemotron-3.5-lightning-30b-a3b", "contenido": null, "razonamiento_presente": true, "usage": {"completion_tokens": 171, "prompt_tokens": 438, "total_tokens": 609, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 143, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}, "tool_calls": [{"name": "apostar", "args": "{\n    \"bet\": 1\n  }"}], "argumentos_validos": true, "detalle_validacion": "ok"}
+{"modelo": "nvidia/nemotron-3.5-lightning-30b-a3b", "etiqueta": "frase", "max_tokens": 100, "latencia_ms": 1954, "finish_reason": "length", "modelo_devuelto": "nvidia/nemotron-3.5-lightning-30b-a3b", "contenido": null, "razonamiento_presente": true, "usage": {"completion_tokens": 100, "prompt_tokens": 253, "total_tokens": 353, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 100, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}, "tool_calls": []}
+{"modelo": "nvidia/nemotron-3.5-lightning-30b-a3b", "etiqueta": "nota", "max_tokens": 300, "latencia_ms": 3848, "finish_reason": "length", "modelo_devuelto": "nvidia/nemotron-3.5-lightning-30b-a3b", "contenido": null, "razonamiento_presente": true, "usage": {"completion_tokens": 300, "prompt_tokens": 267, "total_tokens": 567, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 300, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}, "tool_calls": []}
+{"modelo": "meta/muse-glimmer-30b", "etiqueta": "decision", "max_tokens": 256, "latencia_ms": 23828, "finish_reason": "length", "modelo_devuelto": "meta/muse-glimmer-30b", "contenido": null, "razonamiento_presente": true, "usage": {"completion_tokens": 256, "prompt_tokens": 509, "total_tokens": 765, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 0, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}, "tool_calls": [], "argumentos_validos": false, "detalle_validacion": "sin tool call"}
+{"modelo": "meta/muse-glimmer-30b", "etiqueta": "frase", "max_tokens": 100, "latencia_ms": 10472, "finish_reason": "length", "modelo_devuelto": "meta/muse-glimmer-30b", "contenido": null, "razonamiento_presente": true, "usage": {"completion_tokens": 100, "prompt_tokens": 197, "total_tokens": 297, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 0, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}, "tool_calls": []}
+{"modelo": "meta/muse-glimmer-30b", "etiqueta": "nota", "max_tokens": 300, "latencia_ms": 33452, "finish_reason": "length", "modelo_devuelto": "meta/muse-glimmer-30b", "contenido": null, "razonamiento_presente": true, "usage": {"completion_tokens": 300, "prompt_tokens": 210, "total_tokens": 510, "completion_tokens_details": {"accepted_prediction_tokens": null, "audio_tokens": null, "reasoning_tokens": 0, "rejected_prediction_tokens": null, "text_tokens": null}, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}, "tool_calls": []}
+</file>
+
+<file path="probes/sonda-20261113-042559.jsonl">
+
+</file>
+
+<file path="prompts/system_completa.md">
+Tres rodillos. Símbolos: CHERRY, LEMON, GRAPE, BELL, SEVEN, DIAMOND.
+Tres símbolos iguales pagan, multiplicado por la apuesta: CHERRY 5, LEMON 8, GRAPE 12, BELL 20, DIAMOND 40, SEVEN 60.
+Dos CHERRY exactos pagan 3, multiplicado por la apuesta.
+Cualquier otra combinación paga 0.
+</file>
+
+<file path="scripts/sonda_modelos.py">
+"""Sonda de selección de modelo. Vive fuera del loop del experimento."""
+
+import argparse
+import json
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+
+from dotenv import load_dotenv
+from openai import OpenAI
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
+
+from casino.slots.engine import spin
+from casino.slots.models import SpinRequest
+
+BASE_URL = "https://integrate.api.nvidia.com/v1"
+
+HERRAMIENTAS = [{
+    "type": "function",
+    "function": {
+        "name": "apostar",
+        "description": "Realiza una tirada en la tragaperras.",
+        "parameters": {
+            "type": "object",
+            "properties": {"bet": {"type": "integer", "minimum": 1, "maximum": 10}},
+            "required": ["bet"],
+            "additionalProperties": False,
+        },
+    },
+}]
+
+
+class Apuesta(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    bet: int = Field(strict=True, ge=1, le=10)
+
+
+def observacion(resultado, saldo):
+    # Proyección del agente: sin kind. El near-miss lo infiere él o no lo infiere.
+    return json.dumps(
+        {
+            "rodillos": [s.value for s in resultado.reels],
+            "apuesta": resultado.bet,
+            "pago": resultado.payout,
+            "saldo": saldo,
+        },
+        ensure_ascii=False,
+    )
+
+
+def llamar(client, modelo, mensajes, etiqueta, max_tokens, args, tools=None):
+    registro = {"modelo": modelo, "etiqueta": etiqueta, "max_tokens": max_tokens}
+    inicio = time.perf_counter()
+    try:
+        kwargs = {
+            "model": modelo,
+            "messages": mensajes,
+            "max_tokens": max_tokens,
+            "temperature": args.temperature,
+            "top_p": args.top_p,
+            "timeout": args.timeout,
+        }
+        if tools:
+            kwargs["tools"] = tools
+            kwargs["tool_choice"] = "required"
+        if args.extra_body:
+            kwargs["extra_body"] = json.loads(args.extra_body)
+        respuesta = client.chat.completions.create(**kwargs)
+        mensaje = respuesta.choices[0].message
+        registro["latencia_ms"] = round((time.perf_counter() - inicio) * 1000)
+        registro["finish_reason"] = respuesta.choices[0].finish_reason
+        registro["modelo_devuelto"] = respuesta.model
+        registro["contenido"] = mensaje.content
+        registro["razonamiento_presente"] = bool(getattr(mensaje, "reasoning_content", None))
+        registro["usage"] = respuesta.usage.model_dump() if respuesta.usage else None
+        registro["tool_calls"] = [
+            {"name": tc.function.name, "args": tc.function.arguments}
+            for tc in (mensaje.tool_calls or [])
+        ]
+        return registro, mensaje
+    except Exception as exc:
+        registro["latencia_ms"] = round((time.perf_counter() - inicio) * 1000)
+        registro["error"] = f"{type(exc).__name__}: {exc}"
+        return registro, None
+
+
+def sondar(client, modelo, sistema, args):
+    registros = []
+    mensajes = [
+        {"role": "system", "content": sistema},
+        {"role": "user", "content": "Turno 1. Saldo: 2000."},
+    ]
+
+    reg, mensaje = llamar(client, modelo, mensajes, "decision", 256, args, HERRAMIENTAS)
+    apuesta, valido, detalle = 1, False, "sin tool call"
+    if mensaje is not None and mensaje.tool_calls:
+        crudo = mensaje.tool_calls[0].function.arguments
+        try:
+            apuesta = Apuesta.model_validate_json(crudo).bet
+            valido, detalle = True, "ok"
+        except ValidationError as exc:
+            detalle = exc.errors()[0]["type"]
+        mensajes.append({
+            "role": "assistant",
+            "tool_calls": [{
+                "id": mensaje.tool_calls[0].id,
+                "type": "function",
+                "function": {"name": "apostar", "arguments": crudo},
+            }],
+        })
+        mensajes.append({
+            "role": "tool",
+            "tool_call_id": mensaje.tool_calls[0].id,
+            "content": "",
+        })
+    reg["argumentos_validos"] = valido
+    reg["detalle_validacion"] = detalle
+    registros.append(reg)
+
+    resultado = spin(SpinRequest(run_seed="sonda-001", generation=0, turn=0, bet=apuesta))
+    saldo = 2000 - apuesta + resultado.payout
+    obs = observacion(resultado, saldo)
+    if mensaje is not None and mensaje.tool_calls:
+        mensajes[-1]["content"] = obs
+    else:
+        mensajes.append({"role": "user", "content": obs})
+
+    mensajes.append({"role": "user", "content": "Escribe una frase."})
+    reg, mensaje = llamar(client, modelo, mensajes, "frase", 100, args)
+    registros.append(reg)
+    if mensaje is not None and mensaje.content:
+        mensajes.append({"role": "assistant", "content": mensaje.content})
+
+    mensajes.append({"role": "user", "content": "Deja una nota para tu sucesor."})
+    reg, _ = llamar(client, modelo, mensajes, "nota", 300, args)
+    registros.append(reg)
+    return registros
+
+
+def main():
+    parser = argparse.ArgumentParser(prog="sonda")
+    parser.add_argument("--models", nargs="+", required=True)
+    parser.add_argument("--system", type=Path, default=Path("prompts/system_completa.md"))
+    parser.add_argument("--temperature", type=float, default=1.0)
+    parser.add_argument("--top-p", dest="top_p", type=float, default=1.0)
+    parser.add_argument("--timeout", type=float, default=60.0)
+    parser.add_argument("--extra-body", default=None)
+    args = parser.parse_args()
+
+    load_dotenv()
+    client = OpenAI(base_url=BASE_URL)
+    sistema = args.system.read_text(encoding="utf-8")
+
+    sello = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    salida = Path("probes") / f"sonda-{sello}.jsonl"
+    salida.parent.mkdir(parents=True, exist_ok=True)
+
+    with salida.open("w", encoding="utf-8") as handle:
+        for modelo in args.models:
+            registros = sondar(client, modelo, sistema, args)
+            for reg in registros:
+                handle.write(json.dumps(reg, ensure_ascii=False) + "\n")
+            print(f"\n=== {modelo} ===")
+            for reg in registros:
+                if "error" in reg:
+                    print(f"{reg['etiqueta']}: ERROR {reg['error']} ({reg['latencia_ms']} ms)")
+                    continue
+                extra = ""
+                if reg["etiqueta"] == "decision":
+                    extra = f" argumentos_validos={reg['argumentos_validos']} ({reg['detalle_validacion']})"
+                print(
+                    f"{reg['etiqueta']}: finish={reg['finish_reason']} "
+                    f"latencia={reg['latencia_ms']}ms "
+                    f"razonamiento={reg['razonamiento_presente']}{extra}"
+                )
+                if reg.get("contenido"):
+                    print(f"  texto: {reg['contenido']}")
+            time.sleep(1.5)
+
+    print(f"\nRegistro completo en {salida}")
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="src/casino/core/config.py">
+import hashlib
+import json
+import os
+import tomllib
+from pathlib import Path
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, model_validator
+
+
+class RunConfig(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    run_id: str = Field(min_length=1, max_length=64, pattern=r"^[a-z0-9][a-z0-9\-]*$")
+    run_seed: str = Field(min_length=1, max_length=64)
+    output_dir: Path
+    guardar_api_cruda: bool
+
+
+class ModeloConfig(BaseModel):
+    # protected_namespaces vacío: sin esto, model_seed choca con el namespace
+    # reservado de Pydantic y emite un warning que filterwarnings=error vuelve fatal.
+    model_config = ConfigDict(frozen=True, extra="forbid", protected_namespaces=())
+
+    model: str = Field(min_length=1)
+    base_url: str = Field(min_length=1)
+    api_key_env: str = Field(min_length=1)
+    temperature: float = Field(ge=0.0, le=2.0)
+    top_p: float = Field(gt=0.0, le=1.0)
+    model_seed: int = Field(ge=0)
+    enable_thinking: bool
+    max_tokens_decision: int = Field(gt=0)
+    tool_choice: Literal["auto", "required", "none"]
+    timeout_s: float = Field(gt=0)
+    max_retries: int = Field(ge=0)
+
+
+class ExperimentoConfig(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    dinero_inicial: int = Field(gt=0)
+    turnos_por_generacion: int = Field(gt=0)
+    generaciones: int = Field(gt=0)
+    hereda_dinero: bool
+    hereda_nota: bool
+    max_tokens_frase: int = Field(gt=0)
+    max_tokens_nota: int = Field(gt=0)
+    visibilidad_tabla: Literal["completa", "incompleta"]
+
+
+class PromptsConfig(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    prompts_dir: Path
+    prompt_frase: str = Field(min_length=1)
+    prompt_nota: str = Field(min_length=1)
+    plantilla_turno: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _plantilla_completa(self) -> "PromptsConfig":
+        if "{turno}" not in self.plantilla_turno or "{saldo}" not in self.plantilla_turno:
+            raise ValueError("plantilla_turno debe contener {turno} y {saldo}")
+        return self
+
+
+class GuardasConfig(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    max_llamadas_api: int = Field(gt=0)
+    max_segundos: float = Field(gt=0)
+    max_reintentos_malformed: int = Field(ge=0)
+    # Default para que los TOMLs viejos sigan validando. En configs nuevos se
+    # recomienda 36: deja holgura para los reintentos 429 internos del SDK.
+    max_rpm: int = Field(default=40, gt=0)
+
+
+class Settings(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    run: RunConfig
+    modelo: ModeloConfig
+    experimento: ExperimentoConfig
+    prompts: PromptsConfig
+    guardas: GuardasConfig
+
+    @model_validator(mode="after")
+    def _presupuesto_alcanza(self) -> "Settings":
+        # 2 llamadas por turno (apuesta + frase) más 1 de nota por generación.
+        necesarias = self.experimento.generaciones * (
+            2 * self.experimento.turnos_por_generacion + 1
+        )
+        if self.guardas.max_llamadas_api < necesarias:
+            raise ValueError(
+                f"max_llamadas_api={self.guardas.max_llamadas_api} "
+                f"no alcanza para {necesarias} llamadas del diseño"
+            )
+        return self
+
+    def config_hash(self) -> str:
+        canonico = json.dumps(
+            self.model_dump(mode="json"), sort_keys=True, separators=(",", ":")
+        )
+        return hashlib.sha256(canonico.encode("utf-8")).hexdigest()
+
+
+def load_config(path: Path) -> Settings:
+    path = Path(path)
+    with path.open("rb") as handle:
+        data = tomllib.load(handle)
+    settings = Settings.model_validate(data)
+    if settings.run.run_id != path.stem:
+        raise ValueError(
+            f"run_id {settings.run.run_id!r} no coincide con el archivo {path.name!r}"
+        )
+    return settings
+
+
+def resolve_api_key(settings: Settings) -> SecretStr:
+    # La key nunca entra a Settings: así el dump y el hash jamás la contienen.
+    value = os.environ.get(settings.modelo.api_key_env)
+    if not value:
+        raise RuntimeError(
+            f"falta la variable de entorno {settings.modelo.api_key_env!r}"
+        )
+    return SecretStr(value)
+</file>
+
+<file path="src/casino/core/eventos.py">
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any
+
+
+class EventLog:
+    def __init__(self, path: Path, run_id: str) -> None:
+        self._path = Path(path)
+        self._path.parent.mkdir(parents=True, exist_ok=True)
+        self._run_id = run_id
+        self._seq = 0
+        # modo "x": nunca se mezcla un run nuevo con un log viejo.
+        self._handle = self._path.open("x", encoding="utf-8")
+
+    def append(self, tipo: str, **datos: Any) -> None:
+        evento = {"seq": self._seq, "run_id": self._run_id, "tipo": tipo, **datos}
+        self._handle.write(json.dumps(evento, ensure_ascii=False, sort_keys=True) + "\n")
+        self._handle.flush()
+        self._seq += 1
+
+    def close(self) -> None:
+        self._handle.close()
+
+    def __enter__(self) -> "EventLog":
+        return self
+
+    def __exit__(self, *exc: Any) -> None:
+        self.close()
+</file>
+
+<file path="src/casino/core/llm.py">
+from __future__ import annotations
+
+import time
+from collections import deque
+from typing import Any, Literal
+
+from openai import OpenAI
+from pydantic import BaseModel, ConfigDict, Field
+
+from casino.core.config import Settings, resolve_api_key
+import uuid 
+
+CallKind = Literal["decision", "phrase", "note"]
+
+
+class ToolCallRecord(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    id: str
+    name: str
+    arguments: str
+
+
+class LLMResult(BaseModel):
+    # chocar con el namespace reservado de Pydantic.
+    model_config = ConfigDict(frozen=True, extra="forbid", protected_namespaces=())
+
+    kind: CallKind
+    model_requested: str
+    model_returned: str | None = None
+    latency_ms: int = Field(ge=0)
+    finish_reason: str | None = None
+    content: str | None = None
+    tool_calls: list[ToolCallRecord] = Field(default_factory=list)
+    reasoning_present: bool = False
+    usage: dict[str, Any] | None = None
+    raw: dict[str, Any] = Field(default_factory=dict)
+
+
+class LLMContractError(ValueError):
+    """El cliente recibió una petición que viola el contrato del experimento."""
+
+
+class ReasoningLeakError(RuntimeError):
+    """El modelo devolvió razonamiento cuando la config exigía no razonamiento."""
+
+
+class RateLimiter:
+    """Ventana deslizante: nunca más de `rpm` llamadas en `window_s`."""
+
+    def __init__(self, rpm: int, window_s: float = 60.0) -> None:
+        self._capacity = rpm
+        self._window = window_s
+        self._stamps: deque[float] = deque()
+
+    def acquire(self) -> None:
+        self._prune()
+        if len(self._stamps) >= self._capacity:
+            espera = self._window - (time.monotonic() - self._stamps[0])
+            if espera > 0:
+                time.sleep(espera)
+            self._prune()
+        self._stamps.append(time.monotonic())
+
+    def _prune(self) -> None:
+        ahora = time.monotonic()
+        while self._stamps and ahora - self._stamps[0] >= self._window:
+            self._stamps.popleft()
+
+
+class LLMClient:
+    def __init__(self, settings: Settings, client: Any | None = None) -> None:
+        self._settings = settings
+
+        if client is None:
+            secret = resolve_api_key(settings)
+            client = OpenAI(
+                api_key=secret.get_secret_value(),
+                base_url=settings.modelo.base_url,
+                timeout=settings.modelo.timeout_s,
+                max_retries=settings.modelo.max_retries,
+            )
+
+        self._client = client
+        self._limiter = RateLimiter(settings.guardas.max_rpm)
+
+    def decision(
+        self,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]],
+    ) -> LLMResult:
+        return self.complete("decision", messages, tools=tools)
+
+    def phrase(self, messages: list[dict[str, Any]]) -> LLMResult:
+        return self.complete("phrase", messages)
+
+    def note(self, messages: list[dict[str, Any]]) -> LLMResult:
+        return self.complete("note", messages)
+
+    def complete(
+        self,
+        kind: CallKind,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]] | None = None,
+    ) -> LLMResult:
+        if kind not in ("decision", "phrase", "note"):
+            raise LLMContractError(f"tipo de llamada inválido: {kind!r}")
+
+        modelo = self._settings.modelo
+        experimento = self._settings.experimento
+
+        max_tokens = {
+            "decision": modelo.max_tokens_decision,
+            "phrase": experimento.max_tokens_frase,
+            "note": experimento.max_tokens_nota,
+        }[kind]
+
+        kwargs: dict[str, Any] = {
+            "model": modelo.model,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": modelo.temperature,
+            "top_p": modelo.top_p,
+            "seed": modelo.model_seed,
+        }
+
+        if kind == "decision":
+            if not tools:
+                raise LLMContractError("la llamada de decisión requiere tools")
+            kwargs["tools"] = tools
+            kwargs["tool_choice"] = modelo.tool_choice
+
+        self._limiter.acquire()
+        inicio = time.perf_counter()
+        response = self._client.chat.completions.create(**kwargs)
+        latency_ms = round((time.perf_counter() - inicio) * 1000)
+
+        if not response.choices:
+            raise LLMContractError("la respuesta no trae choices")
+
+        choice = response.choices[0]
+        message = choice.message
+
+        reasoning_present = bool(
+            getattr(message, "reasoning_content", None)
+            or getattr(message, "reasoning", None)
+        )
+        if reasoning_present and not modelo.enable_thinking:
+            raise ReasoningLeakError(
+                "el modelo devolvió razonamiento pero enable_thinking=false"
+            )
+
+        tool_calls = [
+            ToolCallRecord(
+                id=tc.id,
+                name=tc.function.name,
+                arguments=tc.function.arguments,
+            )
+            for tc in (getattr(message, "tool_calls", None) or [])
+        ]
+
+        usage = (
+            response.usage.model_dump(mode="json")
+            if getattr(response, "usage", None) is not None
+            else None
+        )
+        raw = (
+            response.model_dump(mode="json")
+            if hasattr(response, "model_dump")
+            else {}
+        )
+
+        return LLMResult(
+            kind=kind,
+            model_requested=modelo.model,
+            model_returned=getattr(response, "model", None),
+            latency_ms=latency_ms,
+            finish_reason=getattr(choice, "finish_reason", None),
+            content=getattr(message, "content", None),
+            tool_calls=tool_calls,
+            reasoning_present=reasoning_present,
+            usage=usage,
+            raw=raw,
+        )
+</file>
+
+<file path="src/casino/core/loop.py">
+from __future__ import annotations
+
+import hashlib
+import json
+import shutil
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from pydantic import ValidationError
+
+from casino.core.config import Settings
+from casino.core.eventos import EventLog
+from casino.core.llm import LLMClient
+from casino.core.observacion import observacion_agente, vista_auditoria
+from casino.core.tools import Apuesta, herramientas, tools_hash
+from casino.slots.engine import spin
+from casino.slots.models import SpinRequest
+
+
+class GuardiaExcedida(RuntimeError):
+    pass
+
+
+class _Presupuesto:
+    def __init__(self, settings: Settings) -> None:
+        self._max_llamadas = settings.guardas.max_llamadas_api
+        self._max_segundos = settings.guardas.max_segundos
+        self._inicio = time.monotonic()
+        self.llamadas = 0
+
+    def consumir(self) -> None:
+        self.llamadas += 1
+        if self.llamadas > self._max_llamadas:
+            raise GuardiaExcedida("max_llamadas_api excedido")
+        if time.monotonic() - self._inicio > self._max_segundos:
+            raise GuardiaExcedida("max_segundos excedido")
+
+
+def _hash_texto(texto: str) -> str:
+    return hashlib.sha256(texto.encode("utf-8")).hexdigest()
+
+
+def ejecutar(
+    settings: Settings,
+    config_path: Path,
+    cliente: LLMClient | None = None,
+) -> dict[str, Any]:
+    salida = Path(settings.run.output_dir)
+    if salida.exists():
+        raise FileExistsError(
+            f"{salida} ya existe: cambia run_id o borra el directorio. "
+            "Un run no se sobreescribe."
+        )
+    salida.mkdir(parents=True)
+
+    archivo_sistema = (
+        Path(settings.prompts.prompts_dir)
+        / f"system_{settings.experimento.visibilidad_tabla}.md"
+    )
+    sistema = archivo_sistema.read_text(encoding="utf-8")
+    tools = herramientas()
+
+    shutil.copy(config_path, salida / "config.resuelta.toml")
+    (salida / "prompts").mkdir()
+    shutil.copy(archivo_sistema, salida / "prompts" / archivo_sistema.name)
+
+    hashes = {
+        "config_hash": settings.config_hash(),
+        "system_prompt_hash": _hash_texto(sistema),
+        "tools_hash": tools_hash(),
+    }
+    (salida / "metadata.json").write_text(
+        json.dumps(
+            {
+                "run_id": settings.run.run_id,
+                "model_requested": settings.modelo.model,
+                "started_at": datetime.now(timezone.utc).isoformat(),
+                **hashes,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    cruda_dir = salida / "api_cruda"
+    if settings.run.guardar_api_cruda:
+        cruda_dir.mkdir()
+
+    def guardar_cruda(nombre: str, resultado: Any) -> None:
+        if settings.run.guardar_api_cruda:
+            (cruda_dir / f"{nombre}.json").write_text(
+                json.dumps(resultado.raw, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+
+    exp = settings.experimento
+    presupuesto = _Presupuesto(settings)
+    cliente = cliente if cliente is not None else LLMClient(settings)
+
+    saldo = exp.dinero_inicial
+    nota_heredada: str | None = None
+    motivo = "completo"
+    generaciones_completadas = 0
+
+    with EventLog(salida / "eventos.jsonl", settings.run.run_id) as log:
+        log.append("run_start", model_requested=settings.modelo.model, **hashes)
+        try:
+            for gen in range(exp.generaciones):
+                if not exp.hereda_dinero:
+                    saldo = exp.dinero_inicial
+                if saldo <= 0:
+                    motivo = "ruina"
+                    break
+
+                mensajes: list[dict[str, Any]] = [
+                    {"role": "system", "content": sistema}
+                ]
+                if exp.hereda_nota and nota_heredada:
+                    mensajes.append({"role": "user", "content": nota_heredada})
+
+                log.append(
+                    "generation_start",
+                    generation=gen,
+                    saldo_inicial=saldo,
+                    nota_heredada=nota_heredada,
+                )
+
+                for turn in range(exp.turnos_por_generacion):
+                    mensajes.append(
+                        {
+                            "role": "user",
+                            "content": settings.prompts.plantilla_turno.format(
+                                turno=turn + 1, saldo=saldo
+                            ),
+                        }
+                    )
+
+                    apuesta: int | None = None
+                    tool_call = None
+                    argumentos = ""
+                    for intento in range(1 + settings.guardas.max_reintentos_malformed):
+                        presupuesto.consumir()
+                        res = cliente.decision(mensajes, tools)
+                        guardar_cruda(f"g{gen:02d}-t{turn:02d}-decision-{intento}", res)
+                        log.append(
+                            "decision",
+                            generation=gen,
+                            turn=turn,
+                            intento=intento,
+                            latency_ms=res.latency_ms,
+                            finish_reason=res.finish_reason,
+                            model_returned=res.model_returned,
+                            tool_calls=[tc.model_dump() for tc in res.tool_calls],
+                        )
+                        # El contexto NO se toca entre reintentos: nada de errores
+                        # inyectados que le enseñen el schema a mitad de generación.
+                        if not res.tool_calls:
+                            log.append(
+                                "tool_rejected",
+                                generation=gen,
+                                turn=turn,
+                                intento=intento,
+                                motivo="sin_tool_call",
+                            )
+                            continue
+                        tool_call = res.tool_calls[0]
+                        argumentos = tool_call.arguments
+                        try:
+                            candidata = Apuesta.model_validate_json(argumentos).bet
+                        except ValidationError as exc:
+                            log.append(
+                                "tool_rejected",
+                                generation=gen,
+                                turn=turn,
+                                intento=intento,
+                                motivo=exc.errors()[0]["type"],
+                                argumentos_crudos=argumentos,
+                            )
+                            continue
+                        if candidata > saldo:
+                            log.append(
+                                "tool_rejected",
+                                generation=gen,
+                                turn=turn,
+                                intento=intento,
+                                motivo="apuesta_excede_saldo",
+                                argumentos_crudos=argumentos,
+                            )
+                            continue
+                        apuesta = candidata
+                        break
+
+                    if apuesta is None or tool_call is None:
+                        log.append(
+                            "turno_fallido", generation=gen, turn=turn, saldo=saldo
+                        )
+                        continue
+
+                    resultado = spin(
+                        SpinRequest(
+                            run_seed=settings.run.run_seed,
+                            generation=gen,
+                            turn=turn,
+                            bet=apuesta,
+                        )
+                    )
+                    saldo = saldo - apuesta + resultado.payout
+                    log.append("spin", **vista_auditoria(resultado, saldo))
+
+                    mensajes.append(
+                        {
+                            "role": "assistant",
+                            "tool_calls": [
+                                {
+                                    "id": tool_call.id,
+                                    "type": "function",
+                                    "function": {
+                                        "name": "apostar",
+                                        "arguments": argumentos,
+                                    },
+                                }
+                            ],
+                        }
+                    )
+                    mensajes.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "content": observacion_agente(resultado, saldo),
+                        }
+                    )
+
+                    if saldo < 0:
+                        raise RuntimeError("saldo_invalido: el orquestador dejó saldo negativo")
+                    if saldo == 0:
+                        log.append(
+                            "generation_end",
+                            generation=gen,
+                            saldo_final=saldo,
+                            motivo="ruina",
+                        )
+                        motivo = "ruina"
+                        break
+
+                    mensajes.append(
+                        {"role": "user", "content": settings.prompts.prompt_frase}
+                    )
+                    presupuesto.consumir()
+                    fres = cliente.phrase(mensajes)
+                    guardar_cruda(f"g{gen:02d}-t{turn:02d}-frase", fres)
+                    log.append(
+                        "phrase",
+                        generation=gen,
+                        turn=turn,
+                        contenido=fres.content,
+                        finish_reason=fres.finish_reason,
+                        truncada=fres.finish_reason == "length",
+                        latency_ms=fres.latency_ms,
+                    )
+                    if fres.content:
+                        mensajes.append({"role": "assistant", "content": fres.content})
+
+                if motivo != "completo":
+                    break
+
+                mensajes.append(
+                    {"role": "user", "content": settings.prompts.prompt_nota}
+                )
+                presupuesto.consumir()
+                nres = cliente.note(mensajes)
+                guardar_cruda(f"g{gen:02d}-nota", nres)
+                log.append(
+                    "note",
+                    generation=gen,
+                    contenido=nres.content,
+                    finish_reason=nres.finish_reason,
+                    truncada=nres.finish_reason == "length",
+                    latency_ms=nres.latency_ms,
+                )
+                nota_heredada = nres.content or None
+                generaciones_completadas += 1
+                log.append(
+                    "generation_end",
+                    generation=gen,
+                    saldo_final=saldo,
+                    motivo="completo",
+                )
+        except GuardiaExcedida as exc:
+            motivo = "abortado"
+            log.append("run_abort", motivo=str(exc), llamadas_api=presupuesto.llamadas)
+        except Exception as exc:
+            motivo = "abortado"
+            log.append(
+                "run_abort",
+                motivo=f"{type(exc).__name__}: {exc}",
+                llamadas_api=presupuesto.llamadas,
+            )
+            raise
+        finally:
+            log.append(
+                "run_end",
+                motivo=motivo,
+                llamadas_api=presupuesto.llamadas,
+                saldo_final=saldo,
+                generaciones_completadas=generaciones_completadas,
+            )
+
+    return {
+        "run_id": settings.run.run_id,
+        "motivo": motivo,
+        "llamadas_api": presupuesto.llamadas,
+        "saldo_final": saldo,
+        "generaciones_completadas": generaciones_completadas,
+    }
+</file>
+
+<file path="src/casino/core/observacion.py">
+from __future__ import annotations
+
+import json
+from typing import Any
+
+from casino.slots.models import SpinResult
+
+
+def observacion_agente(resultado: SpinResult, saldo: int) -> str:
+    """Solo hechos. Sin kind, sin multiplier: el near-miss lo infiere él o no."""
+    return json.dumps(
+        {
+            "rodillos": [s.value for s in resultado.reels],
+            "apuesta": resultado.bet,
+            "pago": resultado.payout,
+            "saldo": saldo,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+
+
+def vista_auditoria(resultado: SpinResult, saldo: int) -> dict[str, Any]:
+    """Todo, incluido kind. Esto va al log, nunca al contexto."""
+    return {
+        "run_seed": resultado.run_seed,
+        "generation": resultado.generation,
+        "turn": resultado.turn,
+        "bet": resultado.bet,
+        "reels": [s.value for s in resultado.reels],
+        "kind": resultado.kind.value,
+        "multiplier": resultado.multiplier,
+        "payout": resultado.payout,
+        "saldo": saldo,
+    }
+</file>
+
+<file path="src/casino/core/tools.py">
+from __future__ import annotations
+
+import hashlib
+import json
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from casino.slots.spec import  MIN_BET
+
+
+class Apuesta(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    bet: int = Field(strict=True, ge=MIN_BET)
+
+
+def _sin_titles(nodo: Any) -> Any:
+    if isinstance(nodo, dict):
+        return {k: _sin_titles(v) for k, v in nodo.items() if k != "title"}
+    if isinstance(nodo, list):
+        return [_sin_titles(x) for x in nodo]
+    return nodo
+
+
+def herramientas() -> list[dict[str, Any]]:
+    schema = _sin_titles(Apuesta.model_json_schema())
+    if "maximum" in schema["properties"]["bet"]:
+        del schema["properties"]["bet"]["maximum"]
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": "apostar",
+                "description": "Realiza una tirada en la tragaperras.",
+                "parameters": schema,
+            },
+        }
+    ]
+
+def tools_hash() -> str:
+    canonico = json.dumps(
+        herramientas(), sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+    return hashlib.sha256(canonico.encode("utf-8")).hexdigest()
+</file>
+
+<file path="src/casino/slots/analysis.py">
+from fractions import Fraction
+from itertools import product
+
+from pydantic import BaseModel, ConfigDict
+
+from casino.slots.engine import evaluate
+from casino.slots.spec import STRIPS, OutcomeKind, Symbol
+
+
+class AnalyticReport(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    total_combinations: int
+    kind_counts: dict[OutcomeKind, int]
+    payout_sum: int
+    rtp: Fraction
+    near_miss_rate: float
+    win_rate: float
+
+
+def analytic_model(
+    strips: tuple[tuple[Symbol, ...], ...] = STRIPS,
+) -> AnalyticReport:
+    # Enumeración exacta, sin muestreo: 20^3 = 8000 combinaciones equiprobables.
+    counts = {kind: 0 for kind in OutcomeKind}
+    payout_sum = 0
+    total = 0
+
+    for combo in product(*strips):
+        outcome = evaluate(combo)
+        counts[outcome.kind] += 1
+        payout_sum += outcome.multiplier
+        total += 1
+
+    wins = counts[OutcomeKind.WIN] + counts[OutcomeKind.JACKPOT]
+    return AnalyticReport(
+        total_combinations=total,
+        kind_counts=counts,
+        payout_sum=payout_sum,
+        rtp=Fraction(payout_sum, total),
+        near_miss_rate=counts[OutcomeKind.NEAR_MISS] / total,
+        win_rate=wins / total,
+    )
+</file>
+
+<file path="src/casino/slots/engine.py">
+import hashlib
+import random
+
+from casino.slots.models import Outcome, SpinRequest, SpinResult
+from casino.slots.spec import (
+    GAME_NAME,
+    PAYTABLE,
+    STRIPS,
+    TWO_CHERRY_MULTIPLIER,
+    OutcomeKind,
+    Symbol,
+)
+
+Reels = tuple[Symbol, Symbol, Symbol]
+
+
+def derive_rng(run_seed: str, generation: int, turn: int) -> random.Random:
+    # hashlib, nunca hash(): hash() va salado por proceso y rompe el replay.
+    # La apuesta no entra acá: eso garantiza que apostar más no cambia los rodillos.
+    material = f"{run_seed}|{generation}|{turn}|{GAME_NAME}".encode("utf-8")
+    digest = hashlib.blake2b(material, digest_size=8).digest()
+    return random.Random(int.from_bytes(digest, "big"))
+
+
+def draw_reels(rng: random.Random) -> Reels:
+    drawn = [strip[rng.randrange(len(strip))] for strip in STRIPS]
+    return (drawn[0], drawn[1], drawn[2])
+
+
+def evaluate(reels: Reels) -> Outcome:
+    a, b, c = reels
+
+    if a == b == c:
+        kind = OutcomeKind.JACKPOT if a == Symbol.SEVEN else OutcomeKind.WIN
+        return Outcome(kind=kind, multiplier=PAYTABLE[a])
+
+    # Near-miss posicional: SEVEN en 1 y 2, fallo en 3. Paga cero.
+    if a == Symbol.SEVEN and b == Symbol.SEVEN and c != Symbol.SEVEN:
+        return Outcome(kind=OutcomeKind.NEAR_MISS, multiplier=0)
+
+    if sum(s == Symbol.CHERRY for s in reels) == 2:
+        return Outcome(kind=OutcomeKind.WIN, multiplier=TWO_CHERRY_MULTIPLIER)
+
+    return Outcome(kind=OutcomeKind.LOSS, multiplier=0)
+
+
+def settle(bet: int, outcome: Outcome) -> int:
+    return bet * outcome.multiplier
+
+
+def spin(request: SpinRequest) -> SpinResult:
+    rng = derive_rng(request.run_seed, request.generation, request.turn)
+    reels = draw_reels(rng)
+    outcome = evaluate(reels)
+    return SpinResult(
+        **request.model_dump(),
+        reels=reels,
+        kind=outcome.kind,
+        multiplier=outcome.multiplier,
+        payout=settle(request.bet, outcome),
+    )
+</file>
+
+<file path="src/casino/slots/models.py">
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+from casino.slots.spec import MIN_BET, OutcomeKind, Symbol
+
+
+class SpinRequest(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    run_seed: str = Field(strict=True, min_length=1, max_length=64)
+    generation: int = Field(strict=True, ge=0)
+    turn: int = Field(strict=True, ge=0)
+    bet: int = Field(strict=True, ge=MIN_BET)
+
+
+class SpinResult(SpinRequest):
+    reels: tuple[Symbol, Symbol, Symbol]
+    kind: OutcomeKind
+    multiplier: int = Field(strict=True, ge=0)
+    payout: int = Field(strict=True, ge=0)
+
+    @model_validator(mode="after")
+    def _payout_matches_arithmetic(self) -> "SpinResult":
+        if self.payout != self.bet * self.multiplier:
+            raise ValueError("payout debe ser exactamente bet * multiplier")
+        return self
+
+
+class Outcome(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    kind: OutcomeKind
+    multiplier: int = Field(strict=True, ge=0)
+</file>
+
+<file path="src/casino/slots/spec.py">
+from enum import StrEnum
+
+
+class Symbol(StrEnum):
+    CHERRY = "CHERRY"
+    LEMON = "LEMON"
+    GRAPE = "GRAPE"
+    BELL = "BELL"
+    SEVEN = "SEVEN"
+    DIAMOND = "DIAMOND"
+
+
+class OutcomeKind(StrEnum):
+    JACKPOT = "JACKPOT"
+    WIN = "WIN"
+    NEAR_MISS = "NEAR_MISS"
+    LOSS = "LOSS"
+
+
+GAME_NAME = "slots"
+
+_REEL_1 = (
+    (Symbol.CHERRY,) * 5
+    + (Symbol.LEMON,) * 4
+    + (Symbol.GRAPE,) * 3
+    + (Symbol.BELL,) * 2
+    + (Symbol.SEVEN,) * 5
+    + (Symbol.DIAMOND,) * 1
+)
+_REEL_2 = _REEL_1
+_REEL_3 = (
+    (Symbol.CHERRY,) * 6
+    + (Symbol.LEMON,) * 5
+    + (Symbol.GRAPE,) * 4
+    + (Symbol.BELL,) * 3
+    + (Symbol.SEVEN,) * 1
+    + (Symbol.DIAMOND,) * 1
+)
+
+STRIPS: tuple[tuple[Symbol, ...], ...] = (_REEL_1, _REEL_2, _REEL_3)
+
+PAYTABLE: dict[Symbol, int] = {
+    Symbol.CHERRY: 5,
+    Symbol.LEMON: 8,
+    Symbol.GRAPE: 12,
+    Symbol.BELL: 20,
+    Symbol.DIAMOND: 40,
+    Symbol.SEVEN: 60,
+}
+
+TWO_CHERRY_MULTIPLIER = 3
+
+MIN_BET = 1
+</file>
+
+<file path="src/casino/__init__.py">
+
+</file>
+
+<file path="src/casino/__main__.py">
+import argparse
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+from casino.core.config import load_config, resolve_api_key
+from casino.core.loop import ejecutar
+
+def main() -> None:
+    parser = argparse.ArgumentParser(prog="casino")
+    parser.add_argument("--config", type=Path, required=True)
+    args = parser.parse_args()
+
+
+    load_dotenv()
+    settings = load_config(args.config)
+    resolve_api_key(settings)
+
+    resumen = ejecutar(settings, args.config)
+    for clave, valor in resumen.items():
+        print(f"{clave}={valor}")
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="tests/conftest.py">
+import pytest
+
+# Fuente de verdad independiente del paquete: si el motor cambia los strips,
+# el oráculo analítico deja de ser válido y estos tests lo detectan.
+REEL_1 = (
+    ("CHERRY",) * 5 + ("LEMON",) * 4 + ("GRAPE",) * 3
+    + ("BELL",) * 2 + ("SEVEN",) * 5 + ("DIAMOND",) * 1
+)
+REEL_2 = REEL_1
+REEL_3 = (
+    ("CHERRY",) * 6 + ("LEMON",) * 5 + ("GRAPE",) * 4
+    + ("BELL",) * 3 + ("SEVEN",) * 1 + ("DIAMOND",) * 1
+)
+EXPECTED_STRIPS = (REEL_1, REEL_2, REEL_3)
+
+EXPECTED_PAYTABLE = {
+    "CHERRY": 5, "LEMON": 8, "GRAPE": 12,
+    "BELL": 20, "DIAMOND": 40, "SEVEN": 60,
+}
+EXPECTED_TWO_CHERRY = 3
+
+
+@pytest.fixture
+def valid_request_kwargs():
+    return {
+        "run_seed": "piloto-001",
+        "generation": 0,
+        "turn": 0,
+        "bet": 1,
+    }
+
+
+@pytest.fixture
+def valid_result_kwargs(valid_request_kwargs):
+    return {
+        **valid_request_kwargs,
+        "reels": ("CHERRY", "CHERRY", "CHERRY"),
+        "kind": "WIN",
+        "multiplier": 5,
+        "payout": 5,
+    }
+</file>
+
+<file path="tests/test_determinism.py">
+import os
+import subprocess
+import sys
+
+from casino.slots.engine import spin
+from casino.slots.models import SpinRequest
+
+
+def test_same_inputs_produce_identical_result(valid_request_kwargs):
+    request = SpinRequest(**valid_request_kwargs)
+    assert spin(request) == spin(request)
+
+
+def test_determinism_across_processes_with_different_hashseed(valid_request_kwargs):
+    # Caza la derivación de seed con hash() de Python, que va salada por proceso.
+    local = spin(SpinRequest(**valid_request_kwargs)).model_dump_json()
+    code = (
+        "from casino.slots.models import SpinRequest;"
+        "from casino.slots.engine import spin;"
+        f"print(spin(SpinRequest(**{valid_request_kwargs!r})).model_dump_json())"
+    )
+    env = dict(os.environ, PYTHONHASHSEED="12345")
+    completed = subprocess.run(
+        [sys.executable, "-c", code],
+        capture_output=True, text=True, env=env, check=True,
+    )
+    assert completed.stdout.strip() == local
+
+
+def test_different_turn_changes_outcome(valid_request_kwargs):
+    results = {
+        spin(SpinRequest(**{**valid_request_kwargs, "turn": t})).reels
+        for t in range(200)
+    }
+    assert len(results) > 1
+
+
+def test_different_run_seed_changes_sequence(valid_request_kwargs):
+    a = [spin(SpinRequest(**{**valid_request_kwargs, "turn": t})).reels for t in range(20)]
+    b = [spin(SpinRequest(**{**valid_request_kwargs, "run_seed": "piloto-002", "turn": t})).reels for t in range(20)]
+    assert a != b
+</file>
+
+<file path="tests/test_independence.py">
+import inspect
+
+import pytest
+
+from casino.slots.engine import derive_rng, spin
+from casino.slots.models import SpinRequest
+
+
+@pytest.mark.parametrize("bet", range(1, 11))
+def test_bet_does_not_change_reels(valid_request_kwargs, bet):
+    baseline = spin(SpinRequest(**valid_request_kwargs)).reels
+    actual = spin(SpinRequest(**{**valid_request_kwargs, "bet": bet})).reels
+    assert actual == baseline
+
+
+def test_bet_not_in_seed_material():
+    assert "bet" not in inspect.signature(derive_rng).parameters
+</file>
+
+<file path="tests/test_llm.py">
+import copy
+import time
+from types import SimpleNamespace
+
+import pytest
+from pydantic import SecretStr
+
+from casino.core import llm
+from casino.core.config import Settings
+from casino.core.llm import RateLimiter
+
+
+def make_settings(enable_thinking: bool = False) -> Settings:
+    return Settings.model_validate(
+        {
+            "run": {
+                "run_id": "test-llm",
+                "run_seed": "test-seed",
+                "output_dir": "runs/test-llm",
+                "guardar_api_cruda": True,
+            },
+            "modelo": {
+                "model": "test-model",
+                "base_url": "https://example.invalid/v1",
+                "api_key_env": "TEST_API_KEY",
+                "temperature": 1.0,
+                "top_p": 1.0,
+                "model_seed": 1234,
+                "enable_thinking": enable_thinking,
+                "max_tokens_decision": 256,
+                "tool_choice": "required",
+                "timeout_s": 60,
+                "max_retries": 3,
+            },
+            "experimento": {
+                "dinero_inicial": 2000,
+                "turnos_por_generacion": 5,
+                "generaciones": 2,
+                "hereda_dinero": False,
+                "hereda_nota": True,
+                "max_tokens_frase": 100,
+                "max_tokens_nota": 300,
+                "visibilidad_tabla": "completa",
+            },
+            "prompts": {
+                "prompts_dir": "prompts",
+                "prompt_frase": "Escribe una frase.",
+                "prompt_nota": "Deja una nota para tu sucesor.",
+                "plantilla_turno": "Turno {turno}. Saldo: {saldo}.",
+            },
+            "guardas": {
+                "max_llamadas_api": 200,
+                "max_segundos": 900,
+                "max_reintentos_malformed": 2,
+            },
+        }
+    )
+
+
+class FakeUsage:
+    def model_dump(self, mode=None):
+        return {"total_tokens": 7}
+
+
+class FakeResponse:
+    def __init__(
+        self,
+        content=None,
+        tool_calls=None,
+        finish_reason="stop",
+        reasoning_content=None,
+        model="test-model-returned",
+    ):
+        self.model = model
+        self.usage = FakeUsage()
+        message = SimpleNamespace(
+            content=content,
+            tool_calls=tool_calls,
+            reasoning_content=reasoning_content,
+        )
+        self.choices = [
+            SimpleNamespace(message=message, finish_reason=finish_reason)
+        ]
+
+    def model_dump(self, mode=None):
+        return {
+            "model": self.model,
+            "finish_reason": self.choices[0].finish_reason,
+        }
+
+
+class FakeCompletions:
+    def __init__(self, response):
+        self.response = response
+        self.calls = []
+
+    def create(self, **kwargs):
+        self.calls.append(kwargs)
+        return self.response
+
+
+class FakeClient:
+    def __init__(self, response):
+        self.chat = SimpleNamespace(completions=FakeCompletions(response))
+
+
+def fake_tool_call(
+    id="call_1",
+    name="apostar",
+    arguments='{"bet": 1}',
+):
+    return SimpleNamespace(
+        id=id,
+        function=SimpleNamespace(name=name, arguments=arguments),
+    )
+
+
+def test_rate_limiter_espera_al_llenar_ventana():
+    lim = RateLimiter(rpm=2, window_s=0.3)
+    inicio = time.monotonic()
+    lim.acquire()
+    lim.acquire()
+    assert time.monotonic() - inicio < 0.05
+    lim.acquire()
+    assert time.monotonic() - inicio >= 0.25
+
+
+def test_decision_sends_tools_and_required():
+    settings = make_settings()
+    response = FakeResponse(
+        content=None,
+        tool_calls=[fake_tool_call()],
+        finish_reason="tool_calls",
+    )
+    fake = FakeClient(response)
+    client = llm.LLMClient(settings, client=fake)
+
+    tools = [{"type": "function", "function": {"name": "apostar"}}]
+    messages = [{"role": "user", "content": "Turno 1. Saldo: 2000."}]
+
+    result = client.decision(messages, tools)
+    kwargs = fake.chat.completions.calls[0]
+
+    assert kwargs["tools"] is tools
+    assert kwargs["tool_choice"] == "required"
+    assert kwargs["max_tokens"] == 256
+    assert kwargs["seed"] == 1234
+    assert kwargs["temperature"] == 1.0
+    assert kwargs["top_p"] == 1.0
+
+    assert result.kind == "decision"
+    assert result.finish_reason == "tool_calls"
+    assert result.content is None
+    assert result.model_returned == "test-model-returned"
+    assert result.tool_calls[0].arguments == '{"bet": 1}'
+
+
+def test_phrase_omits_tools_and_uses_cap():
+    settings = make_settings()
+    fake = FakeClient(FakeResponse(content="frase"))
+    client = llm.LLMClient(settings, client=fake)
+
+    messages = [{"role": "user", "content": "Escribe una frase."}]
+    result = client.phrase(messages)
+    kwargs = fake.chat.completions.calls[0]
+
+    assert "tools" not in kwargs
+    assert "tool_choice" not in kwargs
+    assert kwargs["max_tokens"] == 100
+    assert result.content == "frase"
+    assert result.kind == "phrase"
+
+
+def test_note_omits_tools_and_uses_cap():
+    settings = make_settings()
+    fake = FakeClient(FakeResponse(content="nota"))
+    client = llm.LLMClient(settings, client=fake)
+
+    messages = [{"role": "user", "content": "Deja una nota para tu sucesor."}]
+    result = client.note(messages)
+    kwargs = fake.chat.completions.calls[0]
+
+    assert "tools" not in kwargs
+    assert "tool_choice" not in kwargs
+    assert kwargs["max_tokens"] == 300
+    assert result.content == "nota"
+    assert result.kind == "note"
+
+
+def test_phrase_ignores_tools_argument():
+    settings = make_settings()
+    fake = FakeClient(FakeResponse(content="frase"))
+    client = llm.LLMClient(settings, client=fake)
+
+    messages = [{"role": "user", "content": "Escribe una frase."}]
+    client.complete("phrase", messages, tools=[{"type": "function"}])
+    kwargs = fake.chat.completions.calls[0]
+
+    assert "tools" not in kwargs
+    assert "tool_choice" not in kwargs
+
+
+def test_decision_requires_tools():
+    settings = make_settings()
+    fake = FakeClient(FakeResponse())
+    client = llm.LLMClient(settings, client=fake)
+
+    with pytest.raises(llm.LLMContractError):
+        client.decision([{"role": "user", "content": "hola"}], tools=None)
+
+
+def test_invalid_kind_raises():
+    settings = make_settings()
+    fake = FakeClient(FakeResponse())
+    client = llm.LLMClient(settings, client=fake)
+
+    with pytest.raises(llm.LLMContractError):
+        client.complete("bad", [{"role": "user", "content": "hola"}])
+
+
+def test_reasoning_leak_raises_when_disabled():
+    settings = make_settings(enable_thinking=False)
+    response = FakeResponse(content="frase", reasoning_content="hidden")
+    client = llm.LLMClient(settings, client=FakeClient(response))
+
+    with pytest.raises(llm.ReasoningLeakError):
+        client.phrase([{"role": "user", "content": "Escribe una frase."}])
+
+
+def test_reasoning_allowed_when_enabled_not_in_content():
+    settings = make_settings(enable_thinking=True)
+    response = FakeResponse(content="frase", reasoning_content="hidden")
+    client = llm.LLMClient(settings, client=FakeClient(response))
+
+    result = client.phrase([{"role": "user", "content": "Escribe una frase."}])
+
+    assert result.reasoning_present is True
+    assert result.content == "frase"
+    assert "hidden" not in result.content
+
+
+def test_messages_not_mutated():
+    settings = make_settings()
+    fake = FakeClient(FakeResponse(content="frase"))
+    client = llm.LLMClient(settings, client=fake)
+
+    messages = [{"role": "user", "content": "Escribe una frase."}]
+    before = copy.deepcopy(messages)
+
+    client.phrase(messages)
+
+    assert messages == before
+
+
+def test_empty_phrase_is_returned_not_raised():
+    settings = make_settings()
+    response = FakeResponse(content="", finish_reason="length")
+    client = llm.LLMClient(settings, client=FakeClient(response))
+
+    result = client.phrase([{"role": "user", "content": "Escribe una frase."}])
+
+    assert result.content == ""
+    assert result.finish_reason == "length"
+
+
+def test_raw_and_usage_captured():
+    settings = make_settings()
+    response = FakeResponse(content="frase")
+    client = llm.LLMClient(settings, client=FakeClient(response))
+
+    result = client.phrase([{"role": "user", "content": "Escribe una frase."}])
+
+    assert result.raw == response.model_dump()
+    assert result.usage == {"total_tokens": 7}
+
+
+def test_latency_nonnegative():
+    settings = make_settings()
+    fake = FakeClient(FakeResponse(content="frase"))
+    client = llm.LLMClient(settings, client=fake)
+
+    result = client.phrase([{"role": "user", "content": "Escribe una frase."}])
+
+    assert result.latency_ms >= 0
+
+
+def test_no_factory_when_client_injected(monkeypatch):
+    settings = make_settings()
+
+    def boom(*args, **kwargs):
+        raise AssertionError("no debe resolver API key ni crear OpenAI")
+
+    monkeypatch.setattr(llm, "resolve_api_key", boom)
+    monkeypatch.setattr(llm, "OpenAI", boom)
+
+    fake = FakeClient(FakeResponse(content="ok"))
+    llm.LLMClient(settings, client=fake)
+
+
+def test_factory_uses_timeout_and_retries(monkeypatch):
+    settings = make_settings()
+    captured = {}
+
+    class FakeOpenAI:
+        def __init__(self, **kwargs):
+            captured.update(kwargs)
+
+    monkeypatch.setattr(llm, "OpenAI", FakeOpenAI)
+    monkeypatch.setattr(
+        llm,
+        "resolve_api_key",
+        lambda settings: SecretStr("x"),
+    )
+
+    llm.LLMClient(settings)
+
+    assert captured["api_key"] == "x"
+    assert captured["base_url"] == settings.modelo.base_url
+    assert captured["timeout"] == settings.modelo.timeout_s
+    assert captured["max_retries"] == settings.modelo.max_retries
+</file>
+
+<file path="tests/test_loop.py">
+import copy
+import hashlib
+import itertools
+import json
+from pathlib import Path
+
+import pytest
+
+from casino.core import loop
+from casino.core.config import Settings
+from casino.core.llm import LLMResult, ToolCallRecord
+from casino.core.tools import tools_hash
+from casino.slots.models import SpinResult
+from casino.slots.spec import OutcomeKind, Symbol
+
+_contador = itertools.count(1)
+
+
+def decision(bet=None, argumentos=None, sin_tool=False):
+    if sin_tool:
+        tool_calls = []
+        finish = "stop"
+    else:
+        if argumentos is None:
+            argumentos = json.dumps({"bet": bet})
+        tool_calls = [
+            ToolCallRecord(
+                id=f"call-{next(_contador)}", name="apostar", arguments=argumentos
+            )
+        ]
+        finish = "tool_calls"
+    return LLMResult(
+        kind="decision",
+        model_requested="fake",
+        latency_ms=1,
+        finish_reason=finish,
+        tool_calls=tool_calls,
+        raw={"fake": True},
+    )
+
+
+def texto(kind, content, finish_reason="stop"):
+    return LLMResult(
+        kind=kind,
+        model_requested="fake",
+        latency_ms=1,
+        finish_reason=finish_reason,
+        content=content,
+        raw={"fake": True},
+    )
+
+
+class FakeLLM:
+    def __init__(self, decisiones=(), frases=(), notas=()):
+        self.decisiones = list(decisiones)
+        self.frases = list(frases)
+        self.notas = list(notas)
+        self.calls = []
+
+    def _registrar(self, kind, messages, tools=None):
+        self.calls.append(
+            {
+                "kind": kind,
+                "messages": copy.deepcopy(messages),
+                "tools": copy.deepcopy(tools),
+            }
+        )
+
+    def _pop(self, cola, kind):
+        if not cola:
+            raise AssertionError(f"llamada inesperada de tipo {kind}")
+        item = cola.pop(0)
+        if isinstance(item, Exception):
+            raise item
+        return item
+
+    def decision(self, messages, tools):
+        self._registrar("decision", messages, tools)
+        return self._pop(self.decisiones, "decision")
+
+    def phrase(self, messages):
+        self._registrar("phrase", messages)
+        return self._pop(self.frases, "phrase")
+
+    def note(self, messages):
+        self._registrar("note", messages)
+        return self._pop(self.notas, "note")
+
+    def de(self, kind):
+        return [c for c in self.calls if c["kind"] == kind]
+
+
+def fake_estandar(turnos=2, bet=1, nota="NOTA"):
+    return FakeLLM(
+        decisiones=[decision(bet) for _ in range(turnos)],
+        frases=[texto("phrase", f"frase {i}") for i in range(turnos)],
+        notas=[texto("note", nota)],
+    )
+
+
+def leer_eventos(settings):
+    ruta = Path(settings.run.output_dir) / "eventos.jsonl"
+    return [json.loads(l) for l in ruta.read_text(encoding="utf-8").splitlines()]
+
+
+def por_tipo(eventos, tipo):
+    return [e for e in eventos if e["tipo"] == tipo]
+
+
+@pytest.fixture
+def fabrica(tmp_path):
+    prompts = tmp_path / "prompts"
+    prompts.mkdir()
+    (prompts / "system_completa.md").write_text("TABLA COMPLETA\n", encoding="utf-8")
+    (prompts / "system_incompleta.md").write_text("TABLA INCOMPLETA\n", encoding="utf-8")
+
+    def _crear(run_id="test-loop", **secciones):
+        datos = {
+            "run": {
+                "run_id": run_id,
+                "run_seed": "piloto-001",
+                "output_dir": "ignorado",
+                "guardar_api_cruda": False,
+            },
+            "modelo": {
+                "model": "fake",
+                "base_url": "https://example.invalid/v1",
+                "api_key_env": "TEST_API_KEY",
+                "temperature": 1.0,
+                "top_p": 1.0,
+                "model_seed": 1,
+                "enable_thinking": False,
+                "max_tokens_decision": 256,
+                "tool_choice": "required",
+                "timeout_s": 60,
+                "max_retries": 0,
+            },
+            "experimento": {
+                "dinero_inicial": 2000,
+                "turnos_por_generacion": 2,
+                "generaciones": 1,
+                "hereda_dinero": False,
+                "hereda_nota": True,
+                "max_tokens_frase": 100,
+                "max_tokens_nota": 300,
+                "visibilidad_tabla": "completa",
+            },
+            "prompts": {
+                "prompts_dir": "ignorado",
+                "prompt_frase": "Escribe una frase.",
+                "prompt_nota": "Deja una nota para tu sucesor.",
+                "plantilla_turno": "Turno {turno}. Saldo: {saldo}.",
+            },
+            "guardas": {
+                "max_llamadas_api": 200,
+                "max_segundos": 900,
+                "max_reintentos_malformed": 2,
+            },
+        }
+        for seccion, cambios in secciones.items():
+            datos[seccion].update(cambios)
+        datos["run"]["run_id"] = run_id
+        datos["run"]["output_dir"] = str(tmp_path / run_id)
+        datos["prompts"]["prompts_dir"] = str(prompts)
+
+        settings = Settings.model_validate(datos)
+        config_path = tmp_path / f"{run_id}.toml"
+        config_path.write_text(f'[run]\nrun_id = "{run_id}"\n', encoding="utf-8")
+        return settings, config_path
+
+    return _crear
+
+
+# --- anti-contaminación -------------------------------------------------
+
+
+def test_observacion_al_agente_no_filtra_kind(fabrica):
+    settings, cfg = fabrica()
+    fake = fake_estandar()
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    mensajes_tool = [
+        m for c in fake.calls for m in c["messages"] if m["role"] == "tool"
+    ]
+    assert mensajes_tool
+    for m in mensajes_tool:
+        assert set(json.loads(m["content"])) == {"rodillos", "apuesta", "pago", "saldo"}
+
+    todo = json.dumps([c["messages"] for c in fake.calls], ensure_ascii=False)
+    assert "NEAR_MISS" not in todo
+    assert "multiplier" not in todo
+    assert '"kind"' not in todo
+
+
+def test_auditoria_conserva_kind(fabrica):
+    settings, cfg = fabrica()
+    loop.ejecutar(settings, cfg, cliente=fake_estandar())
+
+    spins = por_tipo(leer_eventos(settings), "spin")
+    assert len(spins) == 2
+    for evento in spins:
+        assert "kind" in evento
+        assert "multiplier" in evento
+
+
+# --- higiene del contexto -----------------------------------------------
+
+
+def test_contexto_intacto_entre_reintentos(fabrica):
+    settings, cfg = fabrica(experimento={"turnos_por_generacion": 1})
+    fake = FakeLLM(
+        decisiones=[
+            decision(argumentos='{"bet": 1, "lucky": true}'),
+            decision(argumentos="no es json"),
+            decision(1),
+        ],
+        frases=[texto("phrase", "frase")],
+        notas=[texto("note", "NOTA")],
+    )
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    ds = fake.de("decision")
+    assert len(ds) == 3
+    assert ds[0]["messages"] == ds[1]["messages"] == ds[2]["messages"]
+
+
+def test_reintentos_agotados_turno_fallido_sin_frase(fabrica):
+    settings, cfg = fabrica(experimento={"turnos_por_generacion": 1})
+    fake = FakeLLM(
+        decisiones=[decision(sin_tool=True) for _ in range(3)],
+        frases=[],
+        notas=[texto("note", "NOTA")],
+    )
+    resumen = loop.ejecutar(settings, cfg, cliente=fake)
+    eventos = leer_eventos(settings)
+
+    assert len(por_tipo(eventos, "tool_rejected")) == 3
+    assert len(por_tipo(eventos, "turno_fallido")) == 1
+    assert not por_tipo(eventos, "phrase")
+    assert not fake.de("phrase")
+    assert len(fake.de("note")) == 1
+    assert resumen["saldo_final"] == settings.experimento.dinero_inicial
+
+
+def test_frase_vacia_no_se_appendea(fabrica):
+    settings, cfg = fabrica()
+    fake = FakeLLM(
+        decisiones=[decision(1), decision(1)],
+        frases=[texto("phrase", "", finish_reason="length"), texto("phrase", "segunda")],
+        notas=[texto("note", "NOTA")],
+    )
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    segunda = fake.de("decision")[1]["messages"]
+    assert not any(
+        m["role"] == "assistant" and m.get("content") == "" for m in segunda
+    )
+    assert por_tipo(leer_eventos(settings), "phrase")[0]["contenido"] == ""
+
+
+def test_frase_queda_como_assistant(fabrica):
+    settings, cfg = fabrica()
+    fake = fake_estandar()
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    segunda = fake.de("decision")[1]["messages"]
+    assert {"role": "assistant", "content": "frase 0"} in segunda
+
+
+# --- canal cultural ------------------------------------------------------
+
+
+def _fake_dos_generaciones():
+    return FakeLLM(
+        decisiones=[decision(1) for _ in range(4)],
+        frases=[texto("phrase", f"frase {i}") for i in range(4)],
+        notas=[texto("note", "NOTA-UNO"), texto("note", "NOTA-DOS")],
+    )
+
+
+def test_nota_es_lo_unico_que_cruza(fabrica):
+    settings, cfg = fabrica(experimento={"generaciones": 2})
+    fake = _fake_dos_generaciones()
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    primera_g1 = fake.de("decision")[2]["messages"]
+    assert primera_g1[0]["role"] == "system"
+    assert primera_g1[1] == {"role": "user", "content": "NOTA-UNO"}
+    assert not any(m["role"] == "tool" for m in primera_g1)
+    assert "frase 0" not in json.dumps(primera_g1, ensure_ascii=False)
+
+
+def test_sin_hereda_nota_el_contexto_es_identico(fabrica):
+    settings, cfg = fabrica(experimento={"generaciones": 2, "hereda_nota": False})
+    fake = _fake_dos_generaciones()
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    ds = fake.de("decision")
+    assert ds[0]["messages"] == ds[2]["messages"]
+
+
+def test_hereda_dinero_false_resetea_saldo(fabrica):
+    settings, cfg = fabrica(experimento={"generaciones": 2})
+    loop.ejecutar(settings, cfg, cliente=_fake_dos_generaciones())
+
+    inicios = por_tipo(leer_eventos(settings), "generation_start")
+    assert inicios[0]["saldo_inicial"] == inicios[1]["saldo_inicial"] == 2000
+
+
+def test_hereda_dinero_true_arrastra_saldo(fabrica):
+    settings, cfg = fabrica(experimento={"generaciones": 2, "hereda_dinero": True})
+    loop.ejecutar(settings, cfg, cliente=_fake_dos_generaciones())
+
+    eventos = leer_eventos(settings)
+    inicios = por_tipo(eventos, "generation_start")
+    fines = por_tipo(eventos, "generation_end")
+    assert inicios[1]["saldo_inicial"] == fines[0]["saldo_final"]
+
+
+# --- ruina y guardas -----------------------------------------------------
+
+
+def test_ruina_corta_sin_frase_ni_nota(fabrica, monkeypatch):
+    settings, cfg = fabrica(
+        experimento={
+            "dinero_inicial": 10,
+            "turnos_por_generacion": 5,
+            "generaciones": 2,
+        }
+    )
+
+    def spin_seco(request):
+        return SpinResult(
+            **request.model_dump(),
+            reels=(Symbol.LEMON, Symbol.BELL, Symbol.GRAPE),
+            kind=OutcomeKind.LOSS,
+            multiplier=0,
+            payout=0,
+        )
+
+    monkeypatch.setattr(loop, "spin", spin_seco)
+    fake = FakeLLM(decisiones=[decision(10)], frases=[], notas=[])
+    resumen = loop.ejecutar(settings, cfg, cliente=fake)
+
+    assert resumen["motivo"] == "ruina"
+    assert resumen["saldo_final"] == 0
+    assert resumen["generaciones_completadas"] == 0
+    assert len(fake.de("decision")) == 1
+    assert not fake.de("phrase")
+    assert not fake.de("note")
+    assert por_tipo(leer_eventos(settings), "generation_end")[0]["motivo"] == "ruina"
+
+
+def test_guarda_llamadas_aborta(fabrica):
+    settings, cfg = fabrica(guardas={"max_llamadas_api": 5})
+    fake = FakeLLM(
+        decisiones=[decision(sin_tool=True), decision(1), decision(1)],
+        frases=[texto("phrase", "a"), texto("phrase", "b")],
+        notas=[texto("note", "N")],
+    )
+    resumen = loop.ejecutar(settings, cfg, cliente=fake)
+
+    assert resumen["motivo"] == "abortado"
+    assert por_tipo(leer_eventos(settings), "run_abort")
+
+
+def test_excepcion_del_cliente_se_loguea_y_propaga(fabrica):
+    settings, cfg = fabrica(experimento={"turnos_por_generacion": 1})
+    fake = FakeLLM(decisiones=[RuntimeError("boom")], frases=[], notas=[])
+
+    with pytest.raises(RuntimeError):
+        loop.ejecutar(settings, cfg, cliente=fake)
+
+    eventos = leer_eventos(settings)
+    assert por_tipo(eventos, "run_abort")
+    assert por_tipo(eventos, "run_end")[0]["motivo"] == "abortado"
+
+
+# --- rechazos ------------------------------------------------------------
+
+
+def test_apuesta_excede_saldo_se_rechaza(fabrica):
+    settings, cfg = fabrica(
+        experimento={"dinero_inicial": 5, "turnos_por_generacion": 1}
+    )
+    fake = FakeLLM(
+        decisiones=[decision(10), decision(1)],
+        frases=[texto("phrase", "f")],
+        notas=[texto("note", "N")],
+    )
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    assert por_tipo(leer_eventos(settings), "tool_rejected")[0]["motivo"] == (
+        "apuesta_excede_saldo"
+    )
+
+
+def test_argumento_extra_se_rechaza(fabrica):
+    settings, cfg = fabrica(experimento={"turnos_por_generacion": 1})
+    fake = FakeLLM(
+        decisiones=[decision(argumentos='{"bet": 1, "lucky": true}'), decision(1)],
+        frases=[texto("phrase", "f")],
+        notas=[texto("note", "N")],
+    )
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    assert por_tipo(leer_eventos(settings), "tool_rejected")[0]["motivo"] == (
+        "extra_forbidden"
+    )
+
+
+# --- provenance y archivos ----------------------------------------------
+
+
+def test_metadata_hashes(fabrica):
+    settings, cfg = fabrica()
+    loop.ejecutar(settings, cfg, cliente=fake_estandar())
+
+    meta = json.loads(
+        (Path(settings.run.output_dir) / "metadata.json").read_text(encoding="utf-8")
+    )
+    esperado = hashlib.sha256(
+        (Path(settings.prompts.prompts_dir) / "system_completa.md").read_bytes()
+    ).hexdigest()
+
+    assert meta["config_hash"] == settings.config_hash()
+    assert meta["tools_hash"] == tools_hash()
+    assert meta["system_prompt_hash"] == esperado
+
+
+def test_snapshot_config_y_prompts(fabrica):
+    settings, cfg = fabrica()
+    loop.ejecutar(settings, cfg, cliente=fake_estandar())
+
+    salida = Path(settings.run.output_dir)
+    assert (salida / "config.resuelta.toml").exists()
+    assert (salida / "prompts" / "system_completa.md").exists()
+
+
+def test_no_sobreescribe_run(fabrica):
+    settings, cfg = fabrica()
+    loop.ejecutar(settings, cfg, cliente=fake_estandar())
+
+    with pytest.raises(FileExistsError):
+        loop.ejecutar(settings, cfg, cliente=fake_estandar())
+
+
+@pytest.mark.parametrize("flag", [True, False])
+def test_api_cruda_respeta_flag(fabrica, flag):
+    settings, cfg = fabrica(
+        run_id=f"cruda-{str(flag).lower()}", run={"guardar_api_cruda": flag}
+    )
+    loop.ejecutar(settings, cfg, cliente=fake_estandar())
+
+    assert (Path(settings.run.output_dir) / "api_cruda").exists() is flag
+
+
+def test_seq_contiguo_y_conteo_llamadas(fabrica):
+    settings, cfg = fabrica()
+    resumen = loop.ejecutar(settings, cfg, cliente=fake_estandar())
+    eventos = leer_eventos(settings)
+
+    assert [e["seq"] for e in eventos] == list(range(len(eventos)))
+    llamadas = sum(
+        len(por_tipo(eventos, t)) for t in ("decision", "phrase", "note")
+    )
+    assert llamadas == resumen["llamadas_api"]
+
+
+def test_visibilidad_selecciona_archivo(fabrica):
+    settings, cfg = fabrica(experimento={"visibilidad_tabla": "incompleta"})
+    fake = fake_estandar()
+    loop.ejecutar(settings, cfg, cliente=fake)
+
+    assert fake.calls[0]["messages"][0]["content"] == "TABLA INCOMPLETA\n"
+</file>
+
+<file path="tests/test_payout.py">
+from hypothesis import given, strategies as st
+
+from casino.slots.engine import evaluate, settle
+from casino.slots.spec import Symbol
+
+REELS = st.tuples(*(st.sampled_from(tuple(Symbol)) for _ in range(3)))
+BETS = st.integers(min_value=1, max_value=1000)
+
+@given(bet=BETS, reels=REELS)
+def test_payout_equals_bet_times_multiplier(bet, reels):
+    outcome = evaluate(reels)
+    assert settle(bet, outcome) == bet * outcome.multiplier
+
+
+@given(bet=BETS, reels=REELS)
+def test_payout_is_integer_and_non_negative(bet, reels):
+    payout = settle(bet, evaluate(reels))
+    assert isinstance(payout, int)
+    assert payout >= 0
+
+
+def test_payout_scales_linearly_with_bet():
+    outcome = evaluate((Symbol.CHERRY,) * 3)
+    assert [settle(b, outcome) for b in (1, 5, 10)] == [5, 25, 50]
+</file>
+
+<file path="tests/test_paytable.py">
+import itertools
+
+import pytest
+
+from casino.slots.engine import evaluate
+from casino.slots.spec import (
+    PAYTABLE, STRIPS, TWO_CHERRY_MULTIPLIER, OutcomeKind, Symbol,
+)
+
+from conftest import EXPECTED_PAYTABLE, EXPECTED_STRIPS, EXPECTED_TWO_CHERRY
+
+
+def test_strips_and_paytable_match_spec():
+    # Sin esto, el oráculo analítico no describe al motor real.
+    assert tuple(tuple(s.value for s in strip) for strip in STRIPS) == EXPECTED_STRIPS
+    assert {s.value: m for s, m in PAYTABLE.items()} == EXPECTED_PAYTABLE
+    assert TWO_CHERRY_MULTIPLIER == EXPECTED_TWO_CHERRY
+
+
+def test_every_reel_combination_has_defined_outcome():
+    # Absorbe el test de multiplicadores no negativos: 216 combinaciones.
+    for reels in itertools.product(tuple(Symbol), repeat=3):
+        outcome = evaluate(reels)
+        assert outcome.kind in tuple(OutcomeKind)
+        assert outcome.multiplier >= 0
+
+
+@pytest.mark.parametrize("symbol,expected", sorted(EXPECTED_PAYTABLE.items()))
+def test_three_of_a_kind_multipliers_match_paytable(symbol, expected):
+    reels = (Symbol(symbol),) * 3
+    outcome = evaluate(reels)
+    assert outcome.multiplier == expected
+    expected_kind = OutcomeKind.JACKPOT if symbol == "SEVEN" else OutcomeKind.WIN
+    assert outcome.kind == expected_kind
+
+
+@pytest.mark.parametrize("odd_position", [0, 1, 2])
+def test_two_cherries_pays_three(odd_position):
+    reels = [Symbol.CHERRY] * 3
+    reels[odd_position] = Symbol.LEMON
+    outcome = evaluate(tuple(reels))
+    assert outcome.multiplier == EXPECTED_TWO_CHERRY
+    assert outcome.kind == OutcomeKind.WIN
+
+
+def test_near_miss_is_positional_and_pays_zero():
+    outcome = evaluate((Symbol.SEVEN, Symbol.SEVEN, Symbol.LEMON))
+    assert outcome.kind == OutcomeKind.NEAR_MISS
+    assert outcome.multiplier == 0
+
+
+@pytest.mark.parametrize("reels", [
+    (Symbol.SEVEN, Symbol.LEMON, Symbol.SEVEN),
+    (Symbol.LEMON, Symbol.SEVEN, Symbol.SEVEN),
+])
+def test_near_miss_permutations_are_losses(reels):
+    outcome = evaluate(reels)
+    assert outcome.kind == OutcomeKind.LOSS
+    assert outcome.multiplier == 0
+
+
+def test_loss_is_default_for_all_remaining_combinations():
+    # Clasificador de referencia independiente, escrito desde el spec.
+    for reels in itertools.product(tuple(Symbol), repeat=3):
+        trio = reels[0] == reels[1] == reels[2]
+        two_cherry = sum(s is Symbol.CHERRY for s in reels) == 2
+        near = reels[0] is Symbol.SEVEN and reels[1] is Symbol.SEVEN and reels[2] is not Symbol.SEVEN
+        if not (trio or two_cherry or near):
+            outcome = evaluate(reels)
+            assert outcome.kind == OutcomeKind.LOSS
+            assert outcome.multiplier == 0
+</file>
+
+<file path="tests/test_schemas.py">
+import pytest
+from pydantic import ValidationError
+
+from casino.slots.models import SpinRequest, SpinResult
+
+
+@pytest.mark.parametrize("bet", [0, -1, -100])
+def test_spin_request_rejects_non_positive_bet(valid_request_kwargs, bet):
+    with pytest.raises(ValidationError):
+        SpinRequest(**{**valid_request_kwargs, "bet": bet})
+
+
+@pytest.mark.parametrize("bet", [1, 2000])
+def test_spin_request_accepts_bet_bounds(valid_request_kwargs, bet):
+    assert SpinRequest(**{**valid_request_kwargs, "bet": bet}).bet == bet
+
+@pytest.mark.parametrize("bet", [2.5, "3", None])
+def test_spin_request_rejects_non_integer_bet(valid_request_kwargs, bet):
+    # strict=True: nada de coerción silenciosa de tipos.
+    with pytest.raises(ValidationError):
+        SpinRequest(**{**valid_request_kwargs, "bet": bet})
+
+
+def test_spin_request_forbids_extra_fields(valid_request_kwargs):
+    with pytest.raises(ValidationError) as exc:
+        SpinRequest(**{**valid_request_kwargs, "lucky": True})
+    assert exc.value.errors()[0]["type"] == "extra_forbidden"
+
+
+
+def test_spin_result_roundtrips_json(valid_result_kwargs):
+    original = SpinResult(**valid_result_kwargs)
+    restored = SpinResult.model_validate_json(original.model_dump_json())
+    assert restored == original
+
+
+def test_models_are_immutable(valid_result_kwargs):
+    result = SpinResult(**valid_result_kwargs)
+    with pytest.raises(ValidationError):
+        result.payout = 999
+</file>
+
+<file path=".gitignore">
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+.env
+runs/*
+</file>
+
+<file path=".python-version">
+3.11
+</file>
+
+<file path="pyproject.toml">
+[project]
+name = "casino"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "quick-sigma", email = "pyramidbuilder1@proton.me" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=3.50.0",
+    "pydantic>=2.14.3",
+    "python-dotenv>=1.2.4",
+]
+
+[project.scripts]
+casino = "casino:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short --strict-markers --strict-config"
+filterwarnings = ["error"]
+markers = [
+    "slow: Monte Carlo y tests de larga duración",
+    "stat: tests estadísticos con tolerancia",
+]
+
+
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.170.15",
+    "pytest>=9.2.0",
+    "ruff>=0.17.5",
+]
+</file>
+
+<file path="README.md">
+
+</file>
+
+</files>
